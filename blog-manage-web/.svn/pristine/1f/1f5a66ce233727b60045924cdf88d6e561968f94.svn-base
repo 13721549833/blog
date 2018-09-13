@@ -1,0 +1,164 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@ include file="/static/jsp/taglibs.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>菜单管理</title>
+  <link rel="shortcut icon" href="${ctx}/static/src/images/favicon.ico">
+  <link rel="stylesheet" href="${ctx}/static/plugins/layui/css/layui.css" media="all" />
+  <link rel="stylesheet" href="${ctx}/static/plugins/font-awesome/css/font-awesome.min.css" media="all" />
+  <link rel="stylesheet" href="${ctx}/static/src/css/app.css" media="all" />
+  <link rel="stylesheet" href="${ctx}/static/src/css/themes/default.css" media="all" id="skin" kit-skin />
+  <style type="text/css">
+  	.search{border: 1px solid gainsboro;
+    background: white;
+    border-radius: 5px;
+    padding-top: 11px;
+    width: 98%;
+    margin-left: 1%;}
+  </style>
+</head>
+<body>
+  <!--查询条件 开始-->
+  <form class="layui-form search">
+  	<div class="layui-form-item">
+		<label class="layui-form-label">菜单名称:</label>
+		<div class="layui-input-inline">
+			<input type="text" id="name" name="name" lay-verify="name" placeholder="请输入菜单名称" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">菜单类型：</label>
+		<div class="layui-input-inline">
+			<select name="type" id="type" lay-verify="type">
+				<option value="2">一级菜单</option>
+				<option value="1" selected="selected">二级菜单</option>
+			</select>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">菜单状态:</label>
+		<div class="layui-input-inline">
+			<select name="status" id="status" lay-verify="status">
+				<option value="1" selected="selected">启用</option>
+				<option value="0">禁用</option>
+			</select>
+		</div>
+	</div>
+  </form>
+  <div class="admin-main">
+	<div class="layui-field-box layui-form">
+		<table id="menu-lt" lay-filter="menu" class="layui-hide layui-table">
+
+		</table>
+	</div>
+  </div>
+</body> 
+  <script src="${ctx}/static/plugins/layui/layui.js"></script>
+  
+  <script type="text/html" id="menuType">
+  	 {{ d.type==1 ? '一级菜单' : '二级菜单' }}
+  </script>
+  <script type="text/html" id="status">
+	 <!-- 这里的 checked 的状态只是演示 -->
+	 <input disable type="checkbox" name="lock" value="{{d.status}}" title="启用" lay-filter="lockDemo" {{ d.status==1 ? 'checked' : '' }}>
+  </script>
+
+  <script type="text/html" id="menuOper">
+	 <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>修改</a>
+	 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
+  </script>
+  <script>
+        layui.use(['table','layer','form'], function() {
+            var table = layui.table;
+            var layer = layui.layer;
+            var $ = layui.$;
+            table.render({
+            	elem:'#menu-lt',
+            	width:'full',
+            	url:'${ctx}/menus.do',
+            	method:'post',
+            	request:{
+            		pageName:'page',
+            		limitName:'limit',
+            		limit:'10'
+            	},
+            	limits:[10,20,30,40],
+            	response:{
+            		statusName:'code',
+            		statusCode:1,
+            		msgName:'msg',
+            		countName: 'count', //数据总数的字段名称，默认：count
+            		dataName:'data'
+            	},
+            	page:true,
+            	cols:[
+            		[
+						{
+							field:'',
+							title:'',
+							type:'checkbox',
+							align:'center',
+							width:40,
+						},
+            			{
+            				field:'name',
+            				title:'菜单名称',
+            				align:'center',
+            				width:140,
+            			},
+            			{
+            				field:'type',
+            				title:'类型',
+            				align:'center',
+            				width:140,
+            				templet:'#menuType'
+            			},
+            			{
+            				field:'url',
+            				title:'资源地址',
+            				align:'center',
+            				width:180,
+            			},
+            			{
+            				field:'status',
+            				title:'状态',
+            				align:'center',
+            				width:180,
+            				templet: '#status'
+            			},
+            			{
+            				field:'icon',
+            				title:'图标',
+            				align:'center',
+            				width:160,
+            			},
+            			{
+            				field:'createTime',
+            				title:'创建日期',
+            				align:'center',
+            				width:180,
+            			},
+            			{
+            				field:'oper',
+            				title:'操作',
+            				align:'center',
+            				width: 300,
+            				minWidth: 240,
+            				toolbar:'#menuOper'
+            			}
+            		]
+            	]
+            });
+            
+            table.on('tool(role)',function(data){
+            	/* if(data.event=='authorize'){
+            		
+            	} */
+            });
+        });
+    </script>
+</html>

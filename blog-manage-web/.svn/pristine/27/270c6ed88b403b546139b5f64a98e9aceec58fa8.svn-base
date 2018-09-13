@@ -1,0 +1,147 @@
+package com.itaka.blog.manage.controller;
+
+import java.io.IOException;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.itaka.blog.manage.controller.base.BaseController;
+import com.itaka.blog.pojo.User;
+import com.itaka.blog.service.LoginService;
+import com.itaka.blog.util.LoginUtil;
+import com.itaka.blog.util.RandomNumberUtil;
+import com.itaka.blog.util.Result;
+
+@Controller
+@RequestMapping("/web/")
+public class LoginAndMainController extends BaseController{
+	
+	@Autowired
+	private LoginService loginService;
+	
+	/**
+	 * 
+	 * toLogin: 登录页 <br/>
+	 *
+	 * @author Jerry
+	 * @return
+	 */
+	@RequestMapping("toLogin.do")
+	public String toLogin(){
+		return "system/login";
+	}
+	
+	/**
+	 * 
+	 * login: 登录 <br/>
+	 *
+	 * @author Jerry
+	 * @param request
+	 * @param response
+	 * @param username 用户名
+	 * @param password 密码
+	 * @param checkCode 验证码
+	 * @return
+	 */
+	@PostMapping(value="login.do")
+	@ResponseBody
+	public Result login(HttpServletRequest request,HttpServletResponse response,
+			String username,String password,String checkCode){
+		logger.info("login方法---start---");
+		Result result = new Result();
+		try {
+			String code = (String) request.getSession().getAttribute("checkCode");
+			if (StringUtils.isEmpty(code)) {
+				logger.info("验证码已失效，请刷新后再试！");
+				result.setCode(102);
+				result.setMsg("验证码已失效，请刷新再试！");
+			}else if (!code.equalsIgnoreCase(checkCode)) {
+				logger.info("输入的验证码为={},图片验证码为={}", checkCode, code);
+				result.setCode(101);
+				result.setMsg("验证码错误，请重新输入！");
+			}else{
+				User user = loginService.login(username, password, User.USER_TYPE_ROOT, request.getRemoteAddr());
+				if (user!=null) {
+					request.getSession().setAttribute("userInfo", user);
+					LoginUtil.saveCookie(request, response, user.getUsername());
+					logger.info("login方法---end---");
+					result.setCode(200);
+					result.setMsg("登录成功！");
+				}else{
+					result.setCode(100);
+					result.setMsg("登录失败！");
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			result.setCode(-1);
+			result.setMsg("网络异常，请稍后重试！");
+		}
+		logger.info("login方法---end---");
+		return result;
+	}
+	
+	@RequestMapping("system/{changeMenu}")
+	public ModelAndView home(@PathVariable("changeMenu") String changeMenu, HttpServletRequest request,
+			HttpServletResponse response){
+		ModelAndView mav = new ModelAndView();
+		
+		
+		mav.setViewName("system/"+changeMenu);
+		return mav;
+	}
+	
+	/**
+	 * 
+	 * getImageVerificationCode: 登录页取图片验证码 <br/>
+	 *
+	 * @author Jerry
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(value = "getImageVerificationCode.do")
+	public void getImageVerificationCode(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			logger.info("getImageVerificationCode方法  ---start---");
+			RandomNumberUtil rdnUtil = RandomNumberUtil.Instance();
+			logger.info("验证码为={}", rdnUtil.getString());
+			// 将验证码放到session
+			request.getSession().setAttribute("checkCode", rdnUtil.getString());
+			ServletOutputStream out = response.getOutputStream();
+			rdnUtil.getImageOps().writeTo(out);
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
+		logger.info("getImageVerificationCode方法  ---end---");
+	}
+	
+	/**
+	 * 
+	 * logout: 注销 <br/>
+	 *
+	 * @author Jerry
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@GetMapping("logout.do")
+	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		logger.info("logout方法  ---start---");
+		request.getSession().removeAttribute("userInfo");
+		request.getSession().invalidate();
+		LoginUtil.clearCookie(request, response);
+		response.sendRedirect(request.getContextPath() + "/page/login.jsp");
+		logger.info("logout方法  ---end---");
+	}
+}

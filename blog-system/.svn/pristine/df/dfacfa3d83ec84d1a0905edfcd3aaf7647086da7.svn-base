@@ -1,0 +1,74 @@
+/** 
+ * Project Name:blog-system-service 
+ * File Name:UserServiceImpl.java 
+ * Package Name:com.itaka.blog.service.impl 
+ * Date:2018年6月26日下午12:13:13
+ */
+package com.itaka.blog.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.itaka.blog.mapper.UserMapper;
+import com.itaka.blog.page.PageInfo;
+import com.itaka.blog.pojo.User;
+import com.itaka.blog.service.UserService;
+import com.itaka.blog.vo.UserConditionVo;
+
+/** 
+ * ClassName: UserServiceImpl <br/> 
+ * Function: 用户服务接口实现类 <br/> 
+ * date: 2018年6月26日 下午12:13:13 <br/> 
+ * 
+ * @author Jerry
+ * @version  
+ */
+@Service
+public class UserServiceImpl implements UserService {
+
+	@Autowired
+	private UserMapper userMapper;
+	
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.UserService#getUserByUsername(java.lang.String) 
+	 */
+	@Override
+	public User getUserByUsername(String username) {
+		return userMapper.getUserByUsername(username);
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.UserService#modifyPersonal(com.itaka.blog.pojo.User) 
+	 */
+	@Override
+	public int modifyPersonal(User user) {
+		return userMapper.updateByPrimaryKeySelective(user);
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.UserService#getUserList(com.itaka.blog.vo.UserConditionVo) 
+	 */
+	@Override
+	public PageInfo<User> getUserList(UserConditionVo conditionVo) {
+		List<User> userList = userMapper.getUserList(conditionVo);
+		PageInfo<User> page = new PageInfo<>();
+		page.setTotal(getTotalUser(conditionVo));
+		page.setList(userList);
+		return page;
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.UserService#getTotalUser(com.itaka.blog.vo.UserConditionVo) 
+	 */
+	@Override
+	public int getTotalUser(UserConditionVo conditionVo) {
+		return userMapper.getTotalUser(conditionVo);
+	}
+
+}

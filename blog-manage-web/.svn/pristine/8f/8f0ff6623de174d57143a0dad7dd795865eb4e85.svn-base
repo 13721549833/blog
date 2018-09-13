@@ -1,0 +1,33 @@
+/** 
+ * Project Name:blog-manage-web 
+ * File Name:UserController.java 
+ * Package Name:com.itaka.blog.manage.controller.user 
+ * Date:2018年7月13日下午4:59:47
+ */
+package com.itaka.blog.manage.controller.user;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.itaka.blog.manage.controller.base.BaseController;
+
+/** 
+ * ClassName: UserController <br/> 
+ * Function: 用户管理控制器 <br/> 
+ * date: 2018年7月13日 下午4:59:47 <br/> 
+ * 
+ * @author Jerry
+ * @version  
+ */
+@Controller
+public class UserController extends BaseController{
+
+	@GetMapping("/userList.do")
+	public ModelAndView userList(HttpServletRequest request){
+		ModelAndView mv = new ModelAndView("system/user/user_list");
+		return mv;
+	}
+}

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itaka.blog.mapper.MenuMapper" >
+  <resultMap id="BaseResultMap" type="com.itaka.blog.pojo.Menu" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="permission" property="permission" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="BIGINT" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="external" property="external" jdbcType="BIT" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="sysMenuMap" type="com.itaka.blog.pojo.SysMenu">
+        <result column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="permission" property="permission" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="sort" property="sort" jdbcType="INTEGER"/>
+        <result column="external" property="external" jdbcType="BIT"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="icon" property="icon" jdbcType="VARCHAR"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, name, type, url, permission, parent_id, sort, external, status, icon, create_time, 
+    update_time
+  </sql>
+  
+  <sql id="menu_column_list">
+    id, name, type, url, permission, parent_id, sort, external, status,icon
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_menu
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_menu
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.itaka.blog.pojo.Menu" >
+    insert into tb_menu (id, name, type, 
+      url, permission, parent_id, 
+      sort, external, status, icon, 
+      create_time, update_time)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{url,jdbcType=VARCHAR}, #{permission,jdbcType=VARCHAR}, #{parentId,jdbcType=BIGINT}, 
+      #{sort,jdbcType=INTEGER}, #{external,jdbcType=BIT}, #{status,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.itaka.blog.pojo.Menu" >
+    insert into tb_menu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="permission != null" >
+        permission,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="external != null" >
+        external,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="permission != null" >
+        #{permission,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="external != null" >
+        #{external,jdbcType=BIT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.itaka.blog.pojo.Menu" >
+    update tb_menu
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="permission != null" >
+        permission = #{permission,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="external != null" >
+        external = #{external,jdbcType=BIT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.itaka.blog.pojo.Menu" >
+    update tb_menu
+    set name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      permission = #{permission,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      sort = #{sort,jdbcType=INTEGER},
+      external = #{external,jdbcType=BIT},
+      status = #{status,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 获取一级菜单 -->
+  <select id="getAllFirstMenuList" resultMap="sysMenuMap">
+  	select <include refid="Base_Column_List"></include>
+  	from tb_menu where parent_id = '0'
+  	and status = 1
+  	order by parent_id asc,sort asc
+  </select>
+  
+  <select id="getAllSubMenuListByParentId" resultMap="sysMenuMap">
+  	select <include refid="Base_Column_List"></include>
+  	from tb_menu
+  	where parent_id=#{parentId}
+  	and status = 1
+  	order by parent_id asc,sort asc
+  </select>
+  
+  <!-- 根据用户id获取菜单列表 -->
+  <select id="getMenuListByUserId" parameterType="Long" resultMap="sysMenuMap">
+  	SELECT m.id,m.name,m.type,m.url,m.permission,m.parent_id,m.sort,m.external,
+  	m.status,m.icon,m.create_time,m.update_time
+	FROM tb_menu m
+	INNER JOIN tb_role_menu rm ON m.id = rm.menu_id
+	INNER JOIN tb_user_role ur ON rm.role_id = ur.role_id
+	WHERE ur.user_id = #{userId} AND m.status = 1
+	ORDER BY m.parent_id asc,m.sort asc
+  </select>
+  
+  <select id="getMenuList" parameterType="com.itaka.blog.vo.MenuConditionVo" resultMap="sysMenuMap">
+  	select <include refid="menu_column_list"/>
+  	from tb_menu 
+  	<where>
+  	  <if test="name != null" >
+        and name like concat(concat('%',#{name}),'%')
+      </if>
+      <if test="type != null" >
+        and type = #{type,jdbcType=VARCHAR}
+      </if>
+      <if test="status != null" >
+        and status = #{status,jdbcType=VARCHAR}
+      </if>
+  	</where>
+  	limit #{pageStart},#{pageSize}
+  	order by parent_id asc,sort asc
+  </select>
+</mapper>

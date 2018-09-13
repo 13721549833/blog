@@ -1,0 +1,65 @@
+/** 
+ * Project Name:blog-system-service 
+ * File Name:RoleServiceImpl.java 
+ * Package Name:com.itaka.blog.service.impl 
+ * Date:2018年6月27日上午8:45:38
+ */
+package com.itaka.blog.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.itaka.blog.mapper.RoleMapper;
+import com.itaka.blog.page.PageInfo;
+import com.itaka.blog.pojo.Role;
+import com.itaka.blog.service.RoleService;
+import com.itaka.blog.vo.RoleConditionVo;
+
+/** 
+ * ClassName: RoleServiceImpl <br/> 
+ * Function: 角色服务接口实现类 <br/> 
+ * date: 2018年6月27日 上午8:45:38 <br/> 
+ * 
+ * @author Jerry
+ * @version  
+ */
+@Service
+public class RoleServiceImpl implements RoleService {
+
+	@Autowired
+	private RoleMapper roleMapper;
+	
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.RoleService#getRoleListByUserId(java.lang.Long) 
+	 */
+	@Override
+	public List<Role> getRoleListByUserId(Long userId) {
+		return roleMapper.getRoleListByUserId(userId);
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.RoleService#getTotalRole(com.itaka.blog.vo.RoleConditionVo) 
+	 */
+	@Override
+	public int getTotalRole(RoleConditionVo conditionVo) {
+		return roleMapper.getTotalRole(conditionVo);
+	}
+	
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.RoleService#getRoleList() 
+	 */
+	@Override
+	public PageInfo<Role> getRoleList(RoleConditionVo conditionVo) {
+		List<Role> roleList = roleMapper.getRoleList(conditionVo);
+		PageInfo<Role> page = new PageInfo<>();
+		page.setTotal(getTotalRole(conditionVo));
+		page.setList(roleList);
+		return page;
+	}
+
+}

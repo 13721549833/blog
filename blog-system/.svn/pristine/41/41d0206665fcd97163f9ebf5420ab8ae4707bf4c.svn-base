@@ -1,0 +1,39 @@
+/** 
+ * Project Name:blog-system-service 
+ * File Name:UserServiceImpl.java 
+ * Package Name:com.itaka.blog.service.impl 
+ * Date:2018年6月26日下午12:13:13
+ */
+package com.itaka.blog.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.itaka.blog.mapper.UserMapper;
+import com.itaka.blog.pojo.User;
+import com.itaka.blog.service.UserService;
+
+/** 
+ * ClassName: UserServiceImpl <br/> 
+ * Function: 用户接口实现类 <br/> 
+ * date: 2018年6月26日 下午12:13:13 <br/> 
+ * 
+ * @author Jerry
+ * @version  
+ */
+@Service
+public class UserServiceImpl implements UserService {
+
+	@Autowired
+	private UserMapper userMapper;
+	
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.UserService#getUserByUsername(java.lang.String) 
+	 */
+	@Override
+	public User getUserByUsername(String username) {
+		return userMapper.getUserByUsername(username);
+	}
+
+}

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itaka.blog.mapper.RoleMapper" >
+  <resultMap id="BaseResultMap" type="com.itaka.blog.pojo.Role" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, description, status, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_role
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tb_role
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.itaka.blog.pojo.Role" >
+    insert into tb_role (id, name, description, 
+      status, create_time, update_time
+      )
+    values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.itaka.blog.pojo.Role" >
+    insert into tb_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null and id != ''" >
+        id,
+      </if>
+      <if test="name != null and name != ''" >
+        name,
+      </if>
+      <if test="description != null and description != ''" >
+        description,
+      </if>
+      <if test="status != null and status != ''" >
+        status,
+      </if>
+      <if test="createTime != null and createTime != ''" >
+        create_time,
+      </if>
+      <if test="updateTime != null and updateTime != ''" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null and id != ''" >
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="name != null and name != ''" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null and description != ''" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null and status != ''" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null and createTime != ''" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null and updateTime != ''" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.itaka.blog.pojo.Role" >
+    update tb_role
+    <set >
+      <if test="name != null and name != ''" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null and description != ''" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null and status != ''" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null and createTime != ''" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null and updateTime != ''" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.itaka.blog.pojo.Role" >
+    update tb_role
+    set name = #{name,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  
+  <select id="getTotalRole" parameterType="com.itaka.blog.vo.RoleConditionVo" resultType="int">
+  	select count(1)
+	from tb_role
+	<where>
+		<if test="name != null and name != ''">
+			and name like concat(concat('%',#{name}),'%')
+		</if>
+		<if test="status != null and status != ''">
+			and status = #{status}
+		</if>
+	</where>
+  </select>
+  
+  <select id="getAllRoleList" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+	from tb_role
+	where status='1'
+  </select>
+  
+  <select id="getRoleListByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select r.id,r.name,r.description,r.status,r.create_time,r.update_time
+	from tb_role r LEFT JOIN tb_user_role ur on r.id=ur.role_id
+	where ur.user_id=#{userId}
+  </select>
+  
+  <select id="getRoleList" parameterType="com.itaka.blog.vo.RoleConditionVo" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+	from tb_role
+	<where>
+		<if test="name != null and name != ''">
+			and name like concat(concat('%',#{name}),'%')
+		</if>
+		<if test="status != null and status != ''">
+			and status = #{status}
+		</if>
+	</where>
+	limit #{startRow},#{pageSize}
+  </select>
+  
+</mapper>

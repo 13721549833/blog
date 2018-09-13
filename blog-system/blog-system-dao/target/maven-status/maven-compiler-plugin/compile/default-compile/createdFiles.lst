@@ -1,0 +1,15 @@
+com\itaka\blog\mapper\LinkMapper.class
+com\itaka\blog\mapper\NoticeMapper.class
+com\itaka\blog\mapper\BlogTagsMapper.class
+com\itaka\blog\mapper\RoleMapper.class
+com\itaka\blog\mapper\UserRoleMapper.class
+com\itaka\blog\mapper\TypeMapper.class
+com\itaka\blog\mapper\SysConfigMapper.class
+com\itaka\blog\mapper\TagsMapper.class
+com\itaka\blog\mapper\LogMapper.class
+com\itaka\blog\mapper\MenuMapper.class
+com\itaka\blog\mapper\BlogKindMapper.class
+com\itaka\blog\mapper\RoleMenuMapper.class
+com\itaka\blog\mapper\BlogMapper.class
+com\itaka\blog\mapper\UserMapper.class
+com\itaka\blog\mapper\CommentMapper.class

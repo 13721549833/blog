@@ -1,0 +1,74 @@
+/** 
+ * Project Name:blog-manage-web 
+ * File Name:RoleController.java 
+ * Package Name:com.itaka.blog.manage.controller.role 
+ * Date:2018年7月19日下午5:16:07
+ */
+package com.itaka.blog.manage.controller.role;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.github.pagehelper.PageInfo;
+import com.itaka.blog.manage.controller.base.BaseController;
+import com.itaka.blog.pojo.Role;
+import com.itaka.blog.service.RoleService;
+import com.itaka.blog.util.Result;
+import com.itaka.blog.vo.RoleConditionVo;
+
+/** 
+ * ClassName: RoleController <br/> 
+ * Function: 角色管理控制器 <br/> 
+ * date: 2018年7月19日 下午5:16:07 <br/> 
+ * 
+ * @author Jerry
+ * @version  
+ */
+@Controller
+public class RoleController extends BaseController {
+
+	@Autowired
+	private RoleService roleService;
+	
+	@GetMapping("/roleList.do")
+	public ModelAndView roleList(){
+		ModelAndView mv = new ModelAndView("system/role/role_list");
+		return mv;
+	}
+	
+	@RequestMapping("/roles.do")
+	@ResponseBody
+	public Result roleListPage(HttpServletRequest request){
+		Result result = new Result();
+		try {
+			String name = request.getParameter("name");
+			String status = request.getParameter("status");
+			RoleConditionVo conditionVo = new RoleConditionVo();
+			conditionVo.setName(name);
+			conditionVo.setStatus(status);
+			if (conditionVo.getPageStart()==0||conditionVo.getPageSize()==0) {
+				conditionVo.setPageStart(Integer.valueOf(DEFAULT_PAGE_NO));
+				conditionVo.setPageSize(Integer.valueOf(DEFAULT_PAGE_SIZE));
+			}else{
+				conditionVo.setPageStart(conditionVo.getPageStart());
+				conditionVo.setPageSize(conditionVo.getPageSize());
+			}
+			PageInfo<Role> page = roleService.getRoleList(conditionVo);
+			result.setCode(1);
+			result.setMsg("请求成功！");
+			result.setCount((int)page.getTotal());
+			result.setData(page.getList());
+		} catch (Exception e) {
+			result.setCode(-1);
+			result.setMsg("网络异常，请稍后重试！");
+			logger.error("===roleListPage===接口请求异常===",e);
+		}
+		return result;
+	}
+}

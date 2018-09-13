@@ -1,0 +1,55 @@
+/** 
+ * Project Name:blog-manage-web 
+ * File Name:UserController.java 
+ * Package Name:com.itaka.blog.manage.controller.user 
+ * Date:2018年7月13日下午4:59:47
+ */
+package com.itaka.blog.manage.controller.user;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.shiro.session.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.itaka.blog.constant.JurisdictionConstant;
+import com.itaka.blog.jurisdiction.Jurisdiction;
+import com.itaka.blog.manage.controller.base.BaseController;
+import com.itaka.blog.pojo.User;
+import com.itaka.blog.service.UserService;
+
+import net.sf.json.JSONObject;
+
+/** 
+ * ClassName: UserController <br/> 
+ * Function: 用户管理控制器 <br/> 
+ * date: 2018年7月13日 下午4:59:47 <br/> 
+ * 
+ * @author Jerry
+ * @version  
+ */
+@Controller
+public class UserController extends BaseController{
+
+	@Autowired
+	private UserService userService;
+	
+	@GetMapping("/userList.do")
+	public ModelAndView userList(HttpServletRequest request){
+		ModelAndView mv = new ModelAndView("system/user/user_list");
+		return mv;
+	}
+	
+	@RequestMapping("/personal.do")
+	public ModelAndView personal(){
+		ModelAndView mv = new ModelAndView("system/user/personal_info");
+		Object userInfo = Jurisdiction.getSession().getAttribute(JurisdictionConstant.SESSION_USER);
+		JSONObject json = JSONObject.fromObject(userInfo);
+		User user = (User) JSONObject.toBean(json,User.class);
+		mv.addObject("user", user);
+		return mv;
+	}
+}

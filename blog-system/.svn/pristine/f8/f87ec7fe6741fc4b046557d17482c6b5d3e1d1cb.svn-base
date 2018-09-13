@@ -1,0 +1,22 @@
+#set Log4j output level and target
+log4j.rootLogger=INFO,stdout
+
+### Console output...
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.Target=System.out
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH\:mm\:ss,SSS} %5p %c{1}\:%L - %m%n
+
+### Uncomment ALL for iBATIS logging
+#log4j.logger.org.apache.ibatis=DEBUG
+log4j.logger.java.sql=DEBUG
+### For Testing
+#log4j.logger.java.lang.Object=DEBUG
+
+log4j.logger.com.ibatis=DEBUG
+log4j.logger.com.ibatis.common.jdbc.SimpleDataSource=DEBUG
+log4j.logger.com.ibatis.common.jdbc.ScriptRunner=DEBUG
+log4j.logger.com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate=DEBUG
+log4j.logger.Java.sql.Connection=DEBUG
+log4j.logger.java.sql.Statement=DEBUG
+log4j.logger.java.sql.PreparedStatement=DEBUG

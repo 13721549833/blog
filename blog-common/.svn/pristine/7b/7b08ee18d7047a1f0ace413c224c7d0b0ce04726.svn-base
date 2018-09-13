@@ -1,0 +1,124 @@
+package com.itaka.blog.util;
+
+import java.security.SecureRandom;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.apache.commons.lang3.StringUtils;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
+/**
+ * 
+ * ClassName: AESCryPTUtil <br/> 
+ * Function: AES加密、解密工具类 <br/> 
+ * date: 2018年6月20日 下午7:39:43 <br/> 
+ * 
+ * @author Jerry
+ * @version
+ */
+@SuppressWarnings("restriction")
+public class AESCryPTUtil {
+
+	/**
+	 * 
+	 * base64Encode: base64Encode加密 <br/>
+	 *
+	 * @author Jerry
+	 * @param bytes bytes待编码的byte[]
+	 * @return
+	 * @throws Exception
+	 */
+	public static String base64Encode(byte[] bytes) throws Exception {
+		return new BASE64Encoder().encode(bytes);
+	}
+	
+	/**
+	 * 
+	 * base64Decode: base64Decode解密 <br/>
+	 *
+	 * @author Jerry
+	 * @param encode 待解码的base64 encode
+	 * @return
+	 * @throws Exception
+	 */
+	public static byte[] base64Decode(String encode) throws Exception {
+		return StringUtils.isEmpty(encode) ? null : new BASE64Decoder().decodeBuffer(encode);
+	}
+	
+	/**
+	 * 
+	 * aesEncryptToBytes: AES加密 <br/>
+	 *
+	 * @author Jerry
+	 * @param encryptKey 加密密钥
+	 * @param content 加密内容
+	 * @return
+	 * @throws Exception
+	 */
+	public static byte[] aesEncryptToBytes(String encryptKey, String content) throws Exception {
+		KeyGenerator kgen = KeyGenerator.getInstance("AES");
+		kgen.init(128, new SecureRandom(encryptKey.getBytes()));
+		Cipher cipher = Cipher.getInstance("AES");
+		cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(kgen.generateKey().getEncoded(), "AES"));
+		return cipher.doFinal(content.getBytes("utf-8"));
+	}
+	
+	/**
+	 * 
+	 * aesDecryptByBytes: AES解密 <br/>
+	 *
+	 * @author Jerry
+	 * @param decryptKey 解密密钥
+	 * @param encryptBytes 待解密内容
+	 * @return
+	 * @throws Exception
+	 */
+	public static String aesDecryptByBytes(String decryptKey, byte[] encryptBytes) throws Exception {
+		KeyGenerator kgen = KeyGenerator.getInstance("AES");
+		kgen.init(128, new SecureRandom(decryptKey.getBytes()));
+		Cipher cipher = Cipher.getInstance("AES");
+		cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(kgen.generateKey().getEncoded(), "AES"));
+		byte[] decryptBytes = cipher.doFinal(encryptBytes);
+		return new String(decryptBytes);
+	}
+	
+	/**
+	 * 
+	 * aesEncrypt: AES加密为base 64 code <br/>
+	 *
+	 * @author Jerry
+	 * @param key 加密密钥
+	 * @param content 加密内容
+	 * @return
+	 * @throws Exception
+	 */
+	public static String aesEncrypt(String key, String content) throws Exception {
+		return base64Encode(aesEncryptToBytes(key, content));
+	}
+	
+	/**
+	 * 
+	 * aesDecrypt: 将base 64 code AES解密 <br/>
+	 *
+	 * @author Jerry
+	 * @param decryptKey 解密密钥
+	 * @param encryptStr 带解密内容
+	 * @return
+	 * @throws Exception
+	 */
+	public static String aesDecrypt(String decryptKey, String encryptStr) throws Exception {
+		return StringUtils.isEmpty(encryptStr) ? null : aesDecryptByBytes(decryptKey, base64Decode(encryptStr));
+	}
+	
+	public static void main(String[] args) throws Exception {
+		String encrypt = aesEncrypt("itaka", "1234567");
+		System.out.println(encrypt);
+		System.out.println(encrypt.length());
+		
+		String decrypt = aesDecrypt("itaka", "IFa8b+EOJxX2u/ixTdJFVQ==");
+		System.out.println(decrypt);
+	}
+}

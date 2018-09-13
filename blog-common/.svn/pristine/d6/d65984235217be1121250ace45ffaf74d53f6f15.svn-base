@@ -1,0 +1,76 @@
+/** 
+ * Project Name:blog-common 
+ * File Name:PageInfo.java 
+ * Package Name:com.itaka.blog.page 
+ * Date:2018年6月26日下午2:54:29
+ */
+package com.itaka.blog.page;
+
+import java.io.Serializable;
+
+/** 
+ * ClassName: PageInfo <br/> 
+ * Function: 分页对象 <br/> 
+ * date: 2018年6月26日 下午2:54:29 <br/> 
+ * 
+ * @author Jerry
+ * @version  
+ */
+public class PageInfo implements Serializable{
+
+	public final static int DEFAULT_PAGE_SIZE = 10;
+    private int pageNumber = 1;
+    private int pageSize = 0;
+    private int pageStart = 0;
+    private String orderField;
+    private String orderDirection;
+    private String keywords;
+
+    public int getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+
+	public String getOrderField() {
+		return orderField;
+	}
+
+	public void setOrderField(String orderField) {
+		this.orderField = orderField;
+	}
+
+	public String getOrderDirection() {
+		return orderDirection;
+	}
+
+	public void setOrderDirection(String orderDirection) {
+		this.orderDirection = orderDirection;
+	}
+
+	public String getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public void setPageStart(int pageStart) {
+		this.pageStart = pageStart;
+	}
+
+	public int getPageSize() {
+        return pageSize > 0 ? pageSize : DEFAULT_PAGE_SIZE;
+    }
+
+    public int getPageStart() {
+        return pageNumber > 0 ? (pageNumber - 1) * getPageSize() : 0;
+    }
+}

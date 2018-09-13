@@ -1,0 +1,17 @@
+package com.itaka.blog.mapper;
+
+import com.itaka.blog.pojo.Link;
+
+public interface LinkMapper {
+    int deleteByPrimaryKey(Long id);
+
+    int insert(Link record);
+
+    int insertSelective(Link record);
+
+    Link selectByPrimaryKey(Long id);
+
+    int updateByPrimaryKeySelective(Link record);
+
+    int updateByPrimaryKey(Link record);
+}

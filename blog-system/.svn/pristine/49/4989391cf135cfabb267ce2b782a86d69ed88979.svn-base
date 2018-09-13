@@ -1,0 +1,146 @@
+/** 
+ * Project Name:blog-system-service 
+ * File Name:UserServiceImpl.java 
+ * Package Name:com.itaka.blog.service.impl 
+ * Date:2018年6月26日下午12:13:13
+ */
+package com.itaka.blog.service.impl;
+
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.itaka.blog.constant.SystemConstant;
+import com.itaka.blog.dto.UserDTO;
+import com.itaka.blog.mapper.UserMapper;
+import com.itaka.blog.mapper.UserRoleMapper;
+import com.itaka.blog.page.PageInfo;
+import com.itaka.blog.pojo.User;
+import com.itaka.blog.pojo.UserRole;
+import com.itaka.blog.service.UserService;
+import com.itaka.blog.util.AESCryPTUtil;
+import com.itaka.blog.util.DateUtil;
+import com.itaka.blog.util.PropertiesUtils;
+import com.itaka.blog.util.RandomIDUtil;
+import com.itaka.blog.vo.UserConditionVo;
+
+/** 
+ * ClassName: UserServiceImpl <br/> 
+ * Function: 用户服务接口实现类 <br/> 
+ * date: 2018年6月26日 下午12:13:13 <br/> 
+ * 
+ * @author Jerry
+ * @version  
+ */
+@Service
+public class UserServiceImpl implements UserService {
+
+	private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+	
+	/**
+	 * 密码加密密钥
+	 */
+	private String keyStr = PropertiesUtils.get("passwordStrAES");
+	
+	@Autowired
+	private UserMapper userMapper;
+	
+	@Autowired
+	private UserRoleMapper userRoleMapper;
+	
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.UserService#getUserByUsername(java.lang.String) 
+	 */
+	@Override
+	public User getUserByUsername(String username) {
+		return userMapper.getUserByUsername(username);
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.UserService#modifyPersonal(com.itaka.blog.pojo.User) 
+	 */
+	@Override
+	public int modifyPersonal(User user) {
+		return userMapper.updateByPrimaryKeySelective(user);
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.UserService#getUserList(com.itaka.blog.vo.UserConditionVo) 
+	 */
+	@Override
+	public PageInfo<User> getUserList(UserConditionVo conditionVo) {
+		List<User> userList = userMapper.getUserList(conditionVo);
+		PageInfo<User> page = new PageInfo<>();
+		page.setTotal(getTotalUser(conditionVo));
+		page.setList(userList);
+		return page;
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.UserService#getTotalUser(com.itaka.blog.vo.UserConditionVo) 
+	 */
+	@Override
+	public int getTotalUser(UserConditionVo conditionVo) {
+		return userMapper.getTotalUser(conditionVo);
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.UserService#addUser(com.itaka.blog.pojo.User) 
+	 */
+	@Override
+	@Transactional
+	public void addUser(UserDTO user) {
+		User user1 = new User();
+		UserRole userRole = new UserRole();
+		try {
+			logger.info("======UserServiceImpl.addUser()======start======");
+			user1.setId(RandomIDUtil.getRandomID());
+			user1.setUsername(user.getUsername());
+			user1.setPassword(AESCryPTUtil.aesEncrypt(keyStr, SystemConstant.DEFAULT_PWD));
+			user1.setNickname(user.getNickname());
+			user1.setEmail(user.getEmail());
+			user1.setMobile(user.getMobile());
+			user1.setQq(user.getQq());
+			if(StringUtils.isEmpty(user.getBirthday())){
+				user1.setBirthday(DateUtil.getDay());
+			}else{
+				user1.setBirthday(user.getBirthday());
+			}
+			user1.setGender(user.getGender());
+			user1.setCompany(user.getCompany());
+			user1.setAvatar(SystemConstant.DEFAULT_IMG);
+			user1.setBlog(user.getBlog());
+			user1.setLocation(user.getLocation());
+			user1.setStatus("1");
+			user1.setScore(0);
+			user1.setExperience(0);
+			user1.setCreateTime(DateUtil.getTime());
+			user1.setUpdateTime(DateUtil.getTime());
+			user1.setRemark(user.getRemark());
+			userMapper.insert(user1);
+			
+			logger.info("======插入用户信息成功======");
+			userRole.setId(RandomIDUtil.getRandomID());
+			userRole.setRoleId(user.getRoleId());
+			userRole.setUserId(user1.getId());
+			userRole.setCreateTime(DateUtil.getTime());
+			userRole.setUpdateTime(DateUtil.getTime());
+			userRoleMapper.insert(userRole);
+			logger.info("======插入用户角色关联信息成功======");
+			logger.info("======UserServiceImpl.addUser()======end======");
+		} catch (Exception e) {
+			logger.error("======UserServiceImpl.addUser()======error======",e);
+		}
+	}
+
+}

@@ -1,0 +1,59 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
+<%@ include file="/static/jsp/taglibs.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>个人资料</title>
+	<link rel="shortcut icon" href="${ctx}/static/src/images/favicon.ico">
+	<link rel="stylesheet" href="${ctx}/static/plugins/layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="${ctx}/static/plugins/font-awesome/css/font-awesome.min.css" media="all" />
+	<link rel="stylesheet" href="${ctx}/static/src/css/app.css" media="all" />
+	<link rel="stylesheet" href="${ctx}/static/src/css/themes/default.css" media="all" id="skin" kit-skin />
+</head>
+<body>
+	<div class="layui-container layui-row">
+		<!--用户头像上传-->
+		<div class="layui-upload layui-col-md4" style="display: inline-block;float: left; text-align: center;">
+		  <div class="layui-upload-list">
+		   <img id="avatar" style="width: 120px;height: 130px;border: 1px solid cadetblue;">
+		   <p id="demoText"></p>
+		  </div>
+		  <button type="button" class="layui-btn" id="uploadBtn">上传头像</button>
+		</div>
+	</div>
+</body>
+<script src="${ctx}/static/plugins/layui/layui.js"></script>
+<script type="text/javascript">
+  	var ctx = '${ctx}';
+</script>
+<script type="text/javascript">
+	layui.use(['form', 'layer','upload'], function() {
+		var layer = layui.layer;
+		var form = layui.form;
+		var $ = layui.$;
+		//得到upload对象
+		var upload = layui.upload;
+		
+		$("#avatar").attr('src',"${user.avatar}" + "?" + Math.random());
+		
+		//文件上传
+		upload.render({
+		  elem: '#uploadBtn',
+		  url: ctx + '/upload.do',
+		  accept: 'file',
+		  method: 'POST',
+		  done: function(data, index, upload){ //上传后的回调
+			  
+		  	if(data.code == "1"){
+		  		layer.msg(data.msg);
+		  		$('#avatar').attr('src',data.url+ '?' + Math.random());
+		  		$(".layui-nav-img",window.parent.document).attr('src',data.url+ '?' + Math.random()); 
+		  	}
+		  }
+		});
+	})
+</script>
+</html>
