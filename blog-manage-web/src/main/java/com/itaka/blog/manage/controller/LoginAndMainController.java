@@ -1,6 +1,7 @@
 package com.itaka.blog.manage.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -123,19 +124,27 @@ public class LoginAndMainController extends BaseController{
 				JSONObject json = JSONObject.fromObject(userInfo);
 				String userId = json.getString("id");
 				List<Role> roleList = roleService.getRoleListByUserId(userId);
+				String roleId = "";
+				String roleName = "";
+				// 遍历用户所拥有的角色
+				for (Role role : roleList) {
+					roleId = role.getId();
+					roleName = role.getName();
+				}
 				JSONArray roleData = JSONArray.fromObject(roleList);
 				Jurisdiction.getSession().setAttribute(JurisdictionConstant.SESSION_USERROLE, roleData);
 				//将用户名放入session
 				Jurisdiction.getSession().setAttribute(JurisdictionConstant.SESSION_USERNAME, json.getString("username"));
-				System.out.println("==============================");
 				System.out.println("========="+roleData+"=========");
+				List<SysMenu> menuList = new ArrayList<>();
+				// 查询角色所拥有的菜单
+				menuList = menuService.getMenuListByRoleId(roleId);
 				// 菜单处理
-				List<SysMenu> menuList = menuService.getMenuListByUserId(userId);
 				Jurisdiction.getSession().setAttribute(JurisdictionConstant.SESSION_MENULIST, menuList);
 				JSONArray menuData = JSONArray.fromObject(menuList);
 				System.out.println("========="+menuData+"=========");
-				System.out.println("==============================");
 				mav.addObject("user", json);
+				mav.addObject("roleName", roleName);
 				mav.addObject("menuList", menuData);
 				mav.setViewName("system/"+changeMenu);
 			}else{

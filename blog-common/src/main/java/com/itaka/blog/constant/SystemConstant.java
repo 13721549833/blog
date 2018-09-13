@@ -22,5 +22,6 @@ public class SystemConstant {
 	public static final String DEFAULT_IMG = PropertiesUtils.get("defaultImg");
 	/** 默认密码  */
 	public static final String DEFAULT_PWD = "123456";
-	
+	/** 超级管理员 */
+	public static final String ROLE_ADMIN = "19c3fd54ef6d442a9312108316190491";
 }

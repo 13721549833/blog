@@ -7,12 +7,11 @@
 package com.itaka.blog.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.itaka.blog.dto.RoleDTO;
 import com.itaka.blog.page.PageInfo;
 import com.itaka.blog.pojo.Role;
-import com.itaka.blog.pojo.SysMenu;
+import com.itaka.blog.pojo.Tree;
 import com.itaka.blog.util.Result;
 import com.itaka.blog.vo.RoleConditionVo;
 
@@ -44,7 +43,7 @@ public interface RoleService {
 	 * @param roleId 角色id
 	 * @return
 	 */
-	List<Map<String, Object>> queryMenuByRoleId(String roleId); 
+	List<Tree> queryMenuByRoleId(String roleId); 
 	
 	/**
 	 * 

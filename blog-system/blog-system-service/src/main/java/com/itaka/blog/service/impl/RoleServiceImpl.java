@@ -7,10 +7,7 @@
 package com.itaka.blog.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
+import com.itaka.blog.constant.JurisdictionConstant;
 import com.itaka.blog.dto.RoleDTO;
 import com.itaka.blog.mapper.MenuMapper;
 import com.itaka.blog.mapper.RoleMapper;
@@ -29,6 +26,7 @@ import com.itaka.blog.pojo.RoleMenu;
 import com.itaka.blog.pojo.SysMenu;
 import com.itaka.blog.pojo.Tree;
 import com.itaka.blog.service.RoleService;
+import com.itaka.blog.service.redis.JedisClient;
 import com.itaka.blog.util.DateUtil;
 import com.itaka.blog.util.RandomIDUtil;
 import com.itaka.blog.util.Result;
@@ -58,6 +56,9 @@ public class RoleServiceImpl implements RoleService {
 	@Autowired
 	private RoleMenuMapper roleMenuMapper;
 	
+	@Autowired
+	private JedisClient jedisClient;
+	
 	/** 
 	 * Function : 
 	 * @see com.itaka.blog.service.RoleService#getRoleListByUserId(java.lang.Long) 
@@ -71,26 +72,33 @@ public class RoleServiceImpl implements RoleService {
 	 * Function : 
 	 * @see com.itaka.blog.service.RoleService#queryMenuByRoleId(java.lang.String) 
 	 */
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Override
-	public List<Map<String, Object>> queryMenuByRoleId(String roleId) {
-		// 根据角色id查询菜单权限
-		List<SysMenu> menuList = menuMapper.queryMenuByRoleId(roleId);
-        if (CollectionUtils.isEmpty(menuList)) {
-            return null;
-        }
-        List<Map<String, Object>> mapList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> map = null;
-        // 将菜单转为ztree形式
-        for (SysMenu menu : menuList) {
-            map = new HashMap<String, Object>(3);
-            map.put("id", menu.getId());
-            map.put("pId", menu.getParentId());
-            map.put("checked", menu.isChecked());
-            map.put("name", menu.getName());
-            map.put("type", menu.getType());
-            mapList.add(map);
-        }
-        return mapList;
+	public List<Tree> queryMenuByRoleId(String roleId) {
+		// 先从缓存取角色菜单权限，如果取不到，再从数据库查
+		String treeJson = jedisClient.get(JurisdictionConstant.REDIS_ROLE_MENU_KEY + roleId);
+		List<Tree> treeList = new ArrayList<Tree>();
+		if (StringUtils.isEmpty(treeJson)) {
+			// 根据角色id查询菜单权限
+			List<SysMenu> menuList = menuMapper.queryMenuByRoleId(roleId);
+	        if (CollectionUtils.isEmpty(menuList)) {
+	            return null;
+	        }
+	        // 将菜单转为ztree形式
+	        for (SysMenu menu : menuList) {
+	        	Tree tree = new Tree();
+	        	tree.setId(menu.getId());
+	        	tree.setpId(menu.getParentId());
+	        	tree.setChecked(menu.isChecked());
+	        	tree.setName(menu.getName());
+	        	tree.setType(menu.getType());
+	        	treeList.add(tree);
+	        }
+	        jedisClient.set(JurisdictionConstant.REDIS_ROLE_MENU_KEY + roleId, JSONArray.fromObject(treeList).toString(), 24*3600);
+		}else{
+			treeList = JSONArray.toList(JSONArray.fromObject(treeJson),Tree.class);
+		}
+        return treeList;
 	}
 	
 	/** 
@@ -212,6 +220,7 @@ public class RoleServiceImpl implements RoleService {
 	 * Function : 
 	 * @see com.itaka.blog.service.RoleService#saveRoleMenu(java.lang.String, java.lang.String) 
 	 */
+	@SuppressWarnings({"unchecked","deprecation"})
 	@Override
 	@Transactional
 	public Result saveRoleMenu(String treeJson, String roleId) {
@@ -224,6 +233,9 @@ public class RoleServiceImpl implements RoleService {
 			}
 			// 先删除角色与菜单之前的关系
 			roleMenuMapper.deleteByRoleId(roleId);
+			// 清除缓存
+			jedisClient.delete(JurisdictionConstant.REDIS_USER_MENU_LIST + roleId);
+			jedisClient.delete(JurisdictionConstant.REDIS_ROLE_MENU_KEY + roleId);
 			logger.info("======删除之前的角色与菜单关系成功======");
 			if (StringUtils.isNotEmpty(treeJson)) {
 				treeJson = treeJson.replaceAll("&quot;", "\"");

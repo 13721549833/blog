@@ -44,6 +44,15 @@ public interface JedisClient {
 	 */
 	String set(String key, String value, int seconds);
 	
+	/**
+	 * 
+	 * delete: 将键key从redis中移除 <br/>
+	 *
+	 * @author Jerry
+	 * @param key
+	 */
+	void delete(String key);
+	
 	String hget(String key, String field);
 	
 	/**

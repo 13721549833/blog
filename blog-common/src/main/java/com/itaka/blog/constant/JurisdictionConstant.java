@@ -37,13 +37,28 @@ public class JurisdictionConstant {
 	public static final String SESSION_USER = "sessionUser";
 	
 	/** 
-	 * SESSION_allmenuList:所有的菜单列表
+	 * SESSION_ALLMENULIST:所有的菜单列表
 	 */ 
 	public static final String SESSION_ALLMENULIST = "allmenuList";
 	
 	/** 
-	 * SESSION_menuList:当前菜单
+	 * SESSION_MENULIST:当前菜单
 	 */ 
 	public static final String SESSION_MENULIST = "menuList";
+	
+	/**
+	 * REDIS_ROLE_MENU_KEY:角色菜单redis键
+	 */
+	public static final String REDIS_ROLE_MENU_KEY = "roleMenuKey";
+	
+	/**
+	 * REDIS_SAVE_ROLE_MENU_KEY：保存角色菜单redis键
+	 */
+	public static final String REDIS_SAVE_ROLE_MENU_KEY = "saveRoleMenuKey";
+	
+	/**
+	 * REDIS_USER_MENU_LIST:用户菜单权限redis键
+	 */
+	public static final String REDIS_USER_MENU_LIST = "userMenuList";
 	
 }

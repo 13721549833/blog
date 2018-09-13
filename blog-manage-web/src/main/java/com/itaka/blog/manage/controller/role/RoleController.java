@@ -7,10 +7,7 @@
 package com.itaka.blog.manage.controller.role;
 
 import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +17,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.itaka.blog.aop.annotation.SysLogMessage;
 import com.itaka.blog.dto.RoleDTO;
 import com.itaka.blog.manage.controller.base.BaseController;
 import com.itaka.blog.page.PageInfo;
 import com.itaka.blog.pojo.Role;
+import com.itaka.blog.pojo.Tree;
 import com.itaka.blog.service.RoleService;
 import com.itaka.blog.util.Result;
 import com.itaka.blog.vo.RoleConditionVo;
@@ -214,7 +211,7 @@ public class RoleController extends BaseController {
 		JSONArray jsonArray = new JSONArray();
 		try {
 			logger.info("======modifyRoleMenus()======start======");
-			List<Map<String, Object>> roleMenuList = roleService.queryMenuByRoleId(roleId);
+			List<Tree> roleMenuList = roleService.queryMenuByRoleId(roleId);
 			jsonArray = JSONArray.fromObject(roleMenuList);
 			logger.info("===授权角色菜单===："+jsonArray);
 			result.setCode(1);

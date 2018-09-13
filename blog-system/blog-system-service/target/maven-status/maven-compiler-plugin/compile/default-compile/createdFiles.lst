@@ -1,9 +1,0 @@
-com\itaka\blog\service\redis\JedisClientPool.class
-com\itaka\blog\service\impl\RoleServiceImpl.class
-com\itaka\blog\service\redis\JedisClient.class
-com\itaka\blog\service\redis\JedisClientCluster.class
-com\itaka\blog\service\impl\Test.class
-com\itaka\blog\service\impl\MenuServiceImpl.class
-com\itaka\blog\service\impl\UserServiceImpl.class
-com\itaka\blog\service\impl\LogServiceImpl.class
-com\itaka\blog\service\impl\LoginServiceImpl.class

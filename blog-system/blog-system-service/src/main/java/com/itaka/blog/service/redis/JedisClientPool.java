@@ -91,4 +91,15 @@ public class JedisClientPool implements JedisClient{
 		return result;
 	}
 
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.redis.JedisClient#delete(java.lang.String) 
+	 */
+	@Override
+	public void delete(String key) {
+		Jedis jedis = jedisPool.getResource();
+		jedis.del(key);
+		jedis.close();
+	}
+
 }

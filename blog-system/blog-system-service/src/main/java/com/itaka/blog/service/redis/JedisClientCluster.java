@@ -61,4 +61,13 @@ public class JedisClientCluster implements JedisClient{
 		return jedisCluster.hdel(key, field);
 	}
 
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.redis.JedisClient#delete(java.lang.String) 
+	 */
+	@Override
+	public void delete(String key) {
+		jedisCluster.del(key);
+	}
+
 }

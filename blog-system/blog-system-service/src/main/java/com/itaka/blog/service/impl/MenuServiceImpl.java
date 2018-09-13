@@ -9,6 +9,7 @@ package com.itaka.blog.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,10 @@ import com.itaka.blog.mapper.MenuMapper;
 import com.itaka.blog.page.PageInfo;
 import com.itaka.blog.pojo.SysMenu;
 import com.itaka.blog.service.MenuService;
+import com.itaka.blog.service.redis.JedisClient;
 import com.itaka.blog.vo.MenuConditionVo;
+
+import net.sf.json.JSONArray;
 
 /** 
  * ClassName: MenuServiceImpl <br/> 
@@ -34,6 +38,9 @@ public class MenuServiceImpl implements MenuService {
 	@Autowired
 	private MenuMapper menuMpper;
 	
+	@Autowired
+	private JedisClient jedisClient;
+	
 	/** 
 	 * Function : 
 	 * @see com.itaka.blog.service.MenuService#getMenuListByUserId(long) 
@@ -48,8 +55,18 @@ public class MenuServiceImpl implements MenuService {
 	 * @see com.itaka.blog.service.MenuService#getMenuListByRoleId(java.lang.String) 
 	 */
 	@Override
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	public List<SysMenu> getMenuListByRoleId(String roleId) {
-		return menuMpper.getMenuListByRoleId(roleId);
+		String MenuJson = jedisClient.get(JurisdictionConstant.REDIS_USER_MENU_LIST + roleId);
+		List<SysMenu> menuList = new ArrayList<>();
+		if (StringUtils.isEmpty(MenuJson)) {
+			menuList = menuMpper.getMenuListByRoleId(roleId);
+			jedisClient.set(JurisdictionConstant.REDIS_USER_MENU_LIST + roleId,JSONArray.fromObject(menuList).toString(),24*3600);
+		}else{
+			JSONArray json = JSONArray.fromObject(MenuJson);
+			menuList = JSONArray.toList(json, SysMenu.class);
+		}
+		return menuList;
 	}
 	
 	/** 
@@ -105,36 +122,6 @@ public class MenuServiceImpl implements MenuService {
 		page.setTotal(getTotalMenu(conditionVo));
 		page.setList(menuList);
 		return page;
-	}
-
-	/** 
-	 * Function : 
-	 * @see com.itaka.blog.service.MenuService#getCacheMenuList(org.apache.shiro.session.Session, java.lang.String, java.lang.String) 
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<SysMenu> getCacheMenuList(Session session, String userName) {
-		// allmenuLt平台的所有菜单组成的列表，userRoleMenuLt：当前用户角色权限所拥有的菜单列表
-		List<SysMenu> allmenuLt = new ArrayList<SysMenu>();
-		List<SysMenu> userRoleMenuLt = new ArrayList<SysMenu>();
-		// 已缓存在session中的用户权限所对应的菜单列表
-		List<SysMenu> cachedMenuLt = (List<SysMenu>)session.getAttribute(userName + JurisdictionConstant.SESSION_ALLMENULIST);
-		// 用户角色权限所对应的菜单列表已缓存至session中
-		if(null == cachedMenuLt){
-			// 获取所有菜单
-			allmenuLt = getAllMenuList("0");
-			/*if(StringUtils.isNotEmpty(jurisdiction)){
-				// 根据角色权限获取本角色拥有的菜单列表
-				userRoleMenuLt = getAllMenuList(allmenuLt, jurisdiction);				
-			}*/
-			// 菜单权限放入session中
-			session.setAttribute(userName + JurisdictionConstant.SESSION_ALLMENULIST, allmenuLt);
-			session.setAttribute(userName + JurisdictionConstant.SESSION_MENULIST, userRoleMenuLt);
-		}else{
-			// 用户角色权限所对应的菜单列表未缓存至session中
-			userRoleMenuLt = cachedMenuLt;
-		}
-		return userRoleMenuLt;
 	}
 
 }

@@ -32,6 +32,27 @@ public class DruidController extends BaseController{
 	@SysLogMessage(logContent="监控中心",operatorMoudle="监控中心",operatorType="访问页面")
 	public void druid(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		logger.info("======druid======start======");
-		response.sendRedirect("http://127.0.0.1:8080/blog/druid/index.html");
+		response.sendRedirect("http://127.0.0.1/blog/druid/index.html");
 	}
+	
+	public String getRemoteAddr(HttpServletRequest request) {
+		String ip = request.getHeader("X-Forwarded-For");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+		ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+		ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+		ip = request.getHeader("HTTP_CLIENT_IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+		ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+		ip = request.getRemoteAddr();
+		}
+		return ip;
+	}
+	
 }

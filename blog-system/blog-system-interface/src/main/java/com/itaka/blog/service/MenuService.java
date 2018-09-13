@@ -92,5 +92,4 @@ public interface MenuService {
 	 */
 	PageInfo<SysMenu> getMenuList(MenuConditionVo conditionVo);
 	
-	List<SysMenu> getCacheMenuList(Session session,String userName);
 }

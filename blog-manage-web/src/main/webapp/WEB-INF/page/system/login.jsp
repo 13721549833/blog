@@ -62,6 +62,11 @@
   <script src="${ctx}/static/plugins/layui/layui.js"></script>
   <script src="${ctx}/static/src/js/RegxValidate.js"></script>
   <script>
+  
+  	if(window.top.location.href!=location.href){
+		window.top.location.href=location.href; 
+	}
+  	
     layui.use(['layer'], function() {
       var layer = layui.layer,
         $ = layui.$;

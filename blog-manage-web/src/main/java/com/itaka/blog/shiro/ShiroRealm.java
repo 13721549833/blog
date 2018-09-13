@@ -1,5 +1,6 @@
 package com.itaka.blog.shiro;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -20,10 +21,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
+import com.itaka.blog.constant.JurisdictionConstant;
+import com.itaka.blog.constant.SystemConstant;
+import com.itaka.blog.jurisdiction.Jurisdiction;
+import com.itaka.blog.pojo.Role;
 import com.itaka.blog.pojo.SysMenu;
 import com.itaka.blog.pojo.User;
 import com.itaka.blog.service.MenuService;
+import com.itaka.blog.service.RoleService;
 import com.itaka.blog.service.UserService;
+
+import net.sf.json.JSONArray;
 
 /**
  * 
@@ -44,6 +52,9 @@ public class ShiroRealm extends AuthorizingRealm {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private RoleService roleService;
+	
 	/**
 	 * 
 	 * Function 授权查询回调函数, 进行鉴权但缓存中无用户的授权信息时调用,负责在应用程序中决定用户的访问控制的方法: 
@@ -59,23 +70,31 @@ public class ShiroRealm extends AuthorizingRealm {
 		if (null == user) {
 			return info;
 		}
-		// 列举此用户所有的权限
-		List<SysMenu> menuList =  menuService.getMenuListByUserId(user.getId());
+		// 查询该用户所拥有的角色
+		List<Role> roleList = roleService.getRoleListByUserId(user.getId());
+		List<SysMenu> menuList = new ArrayList<>();
+		for (Role role : roleList) {
+			// 查询该角色所拥有的菜单权限
+			menuList = menuService.getMenuListByRoleId(role.getId());
+		}
 		StringBuilder sb = new StringBuilder();
 		String permissions = null;
 		if (!CollectionUtils.isEmpty(menuList)) {
 			Set<String> permissionSet = new HashSet<>();
+			// 遍历菜单权限
 			for (SysMenu menu : menuList) {
 				String permission = null;
 				if (!StringUtils.isEmpty(permission = menu.getPermission())) {
 					permissionSet.addAll(Arrays.asList(permission.trim().split(",")));
 				}
 			}
+			// 将权限添加到shiro里
 			info.setStringPermissions(permissionSet);
 			for (String per : permissionSet) {
 				sb.append(per);
 				sb.append(",");
 			}
+			// 这里只是为了方便查看用户权限，并无其他作用
 			permissions = sb.toString();
 			if (StringUtils.isNotBlank(permissions) && permissions.endsWith(",")) {
 				permissions = permissions.substring(0, permissions.length() - 1);
@@ -97,7 +116,8 @@ public class ShiroRealm extends AuthorizingRealm {
 		// 取到用户名
 		String userName = (String)authenticationToken.getPrincipal();
 		// 取到密码
-		String password = new String((char[])authenticationToken.getCredentials()); 	
+		String password = new String((char[])authenticationToken.getCredentials());
+		// 校验用户名密码
 		if(StringUtils.isNotEmpty(userName) && StringUtils.isNotEmpty(password)){
 			logger.info("---class:ShiroRealm---doGetAuthenticationInfo()---end---");
     	    return new SimpleAuthenticationInfo(userName, password, getName());

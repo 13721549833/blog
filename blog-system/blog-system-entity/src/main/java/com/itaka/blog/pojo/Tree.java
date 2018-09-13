@@ -21,6 +21,8 @@ public class Tree implements Serializable{
 	private String id;//id
 	private String pId;//父id
 	private String type;//类型
+	private boolean checked;//是否打开
+	private String name;//名称
 	/** 
 	 * id. 
 	 * @return  the id
@@ -62,5 +64,33 @@ public class Tree implements Serializable{
 	 */
 	public void setType(String type) {
 		this.type = type;
+	}
+	/** 
+	 * checked. 
+	 * @return  the checked
+	 */
+	public boolean isChecked() {
+		return checked;
+	}
+	/** 
+	 * checked. 
+	 * @param   checked    the checked to set
+	 */
+	public void setChecked(boolean checked) {
+		this.checked = checked;
+	}
+	/** 
+	 * name. 
+	 * @return  the name
+	 */
+	public String getName() {
+		return name;
+	}
+	/** 
+	 * name. 
+	 * @param   name    the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 }
