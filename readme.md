@@ -33,8 +33,6 @@
 	先启动blog-system-service服务端,再启动blog-manage-web工程，服务端默认端口为8083；web端默认端口8082，打开网页访问localhost:8082/blog.
 	超级管理员  用户名：guojingyu  密码：123456
 
-<<<<<<< HEAD
 ###后续更新
-=======
-###后续更新
->>>>>>> Initial commit
+
+
