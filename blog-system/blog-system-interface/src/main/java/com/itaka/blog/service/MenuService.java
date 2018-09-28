@@ -8,10 +8,11 @@ package com.itaka.blog.service;
 
 import java.util.List;
 
-import org.apache.shiro.session.Session;
-
+import com.itaka.blog.dto.MenuDTO;
 import com.itaka.blog.page.PageInfo;
+import com.itaka.blog.pojo.Menu;
 import com.itaka.blog.pojo.SysMenu;
+import com.itaka.blog.util.Result;
 import com.itaka.blog.vo.MenuConditionVo;
 
 /** 
@@ -56,6 +57,15 @@ public interface MenuService {
 
 	/**
 	 * 
+	 * getAllSecondMenuList: 获取二级菜单列表 <br/>
+	 *
+	 * @author Jerry
+	 * @return
+	 */
+	List<SysMenu> getAllSecondMenuList();
+	
+	/**
+	 * 
 	 * getFirstMenuList: 获取所有菜单 <br/>
 	 *
 	 * @author Jerry
@@ -92,4 +102,48 @@ public interface MenuService {
 	 */
 	PageInfo<SysMenu> getMenuList(MenuConditionVo conditionVo);
 	
+	/**
+	 * 
+	 * listUrlAndPermission: 获取权限及权限地址列表 <br/>
+	 *
+	 * @author Jerry
+	 * @return
+	 */
+	List<SysMenu> listUrlAndPermission();
+	
+	/**
+	 * 
+	 * saveMenu: 保存菜单 <br/>
+	 *
+	 * @author Jerry
+	 * @param menu 菜单对象
+	 * @return
+	 */
+	Result saveMenu(MenuDTO menu);
+
+	/** 
+	 * deleteMenu: 删除菜单 <br/>
+	 *
+	 * @author Jerry
+	 * @param menuId 菜单id
+	 */ 
+	Result deleteMenu(String menuIds);
+
+	/** 
+	 * getMenuById: 根据id查询菜单信息 <br/>
+	 *
+	 * @author Jerry
+	 * @param menuId 菜单id
+	 * @return 
+	 */ 
+	Menu getMenuById(String menuId);
+
+	/** 
+	 * editMenu: 修改菜单 <br/>
+	 *
+	 * @author Jerry
+	 * @param menu 菜单对象
+	 * @return 
+	 */ 
+	Result editMenu(MenuDTO menu);
 }

@@ -6,7 +6,9 @@
  */
 package com.itaka.blog.service;
 
+import com.itaka.blog.page.PageInfo;
 import com.itaka.blog.pojo.Log;
+import com.itaka.blog.vo.LogConditionVo;
 
 /** 
  * ClassName: LogService <br/> 
@@ -26,4 +28,13 @@ public interface LogService {
 	 */ 
 	void save(Log log);
 
+	/**
+	 * 
+	 * getLogList: 获取日志列表 <br/>
+	 *
+	 * @author Jerry
+	 * @param log 日志查询对象
+	 * @return
+	 */
+	PageInfo<Log> getLogList(LogConditionVo log);
 }

@@ -1,6 +1,10 @@
 package com.itaka.blog.service.redis;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.itaka.blog.util.SerializeUtil;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -102,4 +106,56 @@ public class JedisClientPool implements JedisClient{
 		jedis.close();
 	}
 
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.redis.JedisClient#set(java.lang.String, java.lang.Object, int) 
+	 */
+	@Override
+	public String set(String key, Object obj, int seconds) {
+		String value = SerializeUtil.serialize(obj);
+		Jedis jedis = jedisPool.getResource();
+		String result = jedis.set(key, value);
+		jedis.expire(key, seconds);
+		jedis.close();
+		return result;
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.redis.JedisClient#setList(java.lang.String, java.util.List, int) 
+	 */
+	@Override
+	public void setList(String key, List<?> list, int seconds) {
+		Jedis jedis = jedisPool.getResource();
+		try {
+            if(null == list || list.size() == 0){
+            	//如果list为空,则设置一个空
+                jedis.set(key.getBytes(), "".getBytes());
+                jedis.expire(key.getBytes(), seconds);
+            }else{
+                jedis.set(key.getBytes(), SerializeUtil.serializeList(list));
+                jedis.expire(key.getBytes(), seconds);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.redis.JedisClient#getList(java.lang.String) 
+	 */
+	@Override
+	public List<?> getList(String key) {
+		Jedis jedis = jedisPool.getResource();
+        if(null == jedis || !jedis.exists(key)){
+            return null;
+        }
+        byte[] data = jedis.get(key.getBytes());        
+        jedis.close();
+        return SerializeUtil.unserializeList(data);
+	}
+	
 }

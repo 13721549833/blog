@@ -20,6 +20,11 @@
   <div class="layui-layout layui-layout-admin kit-layout-admin">
     <div class="layui-header">
       <div class="layui-logo">YF - BLOG</div>
+      <ul class="layui-nav layui-layout-left kit-nav">
+      	<li class="layui-nav-item" style="font-size:14px;color:#1e9fff;">
+      		尊敬的${roleName}，欢迎您，当前系统时间:&nbsp;<span id="showTime" style="font-size:14px;color:#e32be6;"></span>
+      	</li>
+      </ul>
       <ul class="layui-nav layui-layout-right kit-nav">
         <li class="layui-nav-item">
           <a href="javascript:;">
@@ -92,7 +97,17 @@
   </script>
   <script src="${ctx}/static/plugins/layui/layui.js"></script>
   <script src="${ctx}/static/src/js/index.js"></script>
-
+  <script type="text/javascript">
+    function showTime(){
+	    nowtime = new Date();
+	    year = nowtime.getFullYear();
+	    month = nowtime.getMonth()+1;
+	    date = nowtime.getDate();
+	    document.getElementById("showTime").innerText=year+"年"+month+"月"+date+" "+nowtime.toLocaleTimeString();
+	}
+    
+    setInterval("showTime()",1000);
+  </script>
 </body>
 
 </html>

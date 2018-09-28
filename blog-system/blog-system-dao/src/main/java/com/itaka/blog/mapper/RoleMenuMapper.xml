@@ -96,4 +96,10 @@
     delete from tb_role_menu
     where role_id = #{roleId,jdbcType=CHAR}
   </delete>
+  
+  <!-- 根据菜单id删除角色菜单关系 -->
+  <delete id="deleteByMenuId" parameterType="java.lang.String" >
+    delete from tb_role_menu
+    where menu_id = #{menuId,jdbcType=CHAR}
+  </delete>
 </mapper>

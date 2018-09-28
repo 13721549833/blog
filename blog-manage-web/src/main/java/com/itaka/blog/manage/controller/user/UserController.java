@@ -11,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,6 +58,7 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@GetMapping("/userList.do")
+	@RequiresPermissions("users")
 	@SysLogMessage(logContent="用户列表",operatorMoudle="系统管理",operatorType="访问页面")
 	public ModelAndView userList(HttpServletRequest request){
 		ModelAndView mv = new ModelAndView("system/user/user_list");
@@ -164,6 +166,7 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@GetMapping("/addUser.do")
+	@RequiresPermissions("user:add")
 	@SysLogMessage(logContent="新增用户",operatorMoudle="系统管理",operatorType="访问页面")
 	public ModelAndView addUser(){
 		ModelAndView mv = new ModelAndView("system/user/user_add");
@@ -205,6 +208,7 @@ public class UserController extends BaseController{
 	 * @return
 	 */
 	@GetMapping("/modifyUser.do")
+	@RequiresPermissions("user:edit")
 	@SysLogMessage(logContent="编辑用户",operatorMoudle="系统管理",operatorType="访问页面")
 	public ModelAndView modifyUser(String userId){
 		ModelAndView mv = new ModelAndView();
@@ -248,6 +252,7 @@ public class UserController extends BaseController{
 	 */
 	@PostMapping("/delUser.do")
 	@ResponseBody
+	@RequiresPermissions("user:delete")
 	@SysLogMessage(logContent="删除用户",operatorMoudle="系统管理",operatorType="用户操作")
 	public Result delUser(String userId){
 		Result result = new Result();

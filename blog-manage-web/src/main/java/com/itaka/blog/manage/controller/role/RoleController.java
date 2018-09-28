@@ -45,6 +45,7 @@ public class RoleController extends BaseController {
 	private RoleService roleService;
 	
 	@GetMapping("/roleList.do")
+	@RequiresPermissions("roles")
 	@SysLogMessage(logContent="角色列表",operatorMoudle="系统设置",operatorType="访问页面")
 	public ModelAndView roleList(){
 		ModelAndView mv = new ModelAndView("system/role/role_list");

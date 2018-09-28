@@ -114,4 +114,17 @@
       add_time = #{addTime,jdbcType=VARCHAR}
     where id = #{id,jdbcType=CHAR}
   </update>
+  
+  <!-- 获取日志总数 -->
+  <select id="getLogTotal" resultType="int">
+  	select count(1) from tb_log
+  </select>
+  
+  <!-- 获取日志列表 -->
+  <select id="getLogList" parameterType="com.itaka.blog.vo.LogConditionVo" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+  	from tb_log 
+  	order by add_time desc
+  	limit #{startRow},#{pageSize}
+  </select>
 </mapper>

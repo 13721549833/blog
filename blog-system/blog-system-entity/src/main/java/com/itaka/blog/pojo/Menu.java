@@ -16,7 +16,7 @@ public class Menu extends BaseEntity {
 
     private Integer sort;
 
-    private Boolean external;
+    private Integer external;
 
     private String status;
 
@@ -70,11 +70,11 @@ public class Menu extends BaseEntity {
         this.sort = sort;
     }
 
-    public Boolean getExternal() {
+    public Integer getExternal() {
         return external;
     }
 
-    public void setExternal(Boolean external) {
+    public void setExternal(Integer external) {
         this.external = external;
     }
 

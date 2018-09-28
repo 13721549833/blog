@@ -30,11 +30,12 @@
 
 		<property name="successUrl" value="/web/system/index.do" />
 
-		<property name="unauthorizedUrl" value="/web/toLogin.do" />
+		<property name="unauthorizedUrl" value="/static/error/unauthorize.jsp" />
 
 		<property name="filterChainDefinitions">
 			<value>
 				/static/** = anon
+				/static/error/unauthorize.jsp = anon
 				/web/toLogin.do = anon
 			</value>
 		</property>

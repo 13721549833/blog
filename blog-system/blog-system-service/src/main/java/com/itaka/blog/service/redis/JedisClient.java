@@ -1,5 +1,7 @@
 package com.itaka.blog.service.redis;
 
+import java.util.List;
+
 /**
  * 
  * ClassName: JedisClient <br/> 
@@ -46,12 +48,44 @@ public interface JedisClient {
 	
 	/**
 	 * 
+	 * set: 将键key设定为指定的“对象”值,并设置失效时间 <br/>
+	 *
+	 * @author Jerry
+	 * @param key
+	 * @param obj
+	 * @param seconds
+	 * @return
+	 */
+	String set(String key, Object obj,int seconds);
+	
+	/**
+	 * 
 	 * delete: 将键key从redis中移除 <br/>
 	 *
 	 * @author Jerry
 	 * @param key
 	 */
 	void delete(String key);
+	
+	/**
+	 * 
+	 * setList: 将键key设定为指定的“列表”值,并设置失效时间 <br/>
+	 *
+	 * @author Jerry
+	 * @param key
+	 * @param list
+	 */
+	void setList(String key, List<?> list, int seconds);
+	
+	/**
+	 * 
+	 * getList: 返回key对应的list <br/>
+	 *
+	 * @author Jerry
+	 * @param key
+	 * @return
+	 */
+	List<?> getList(String key);
 	
 	String hget(String key, String field);
 	

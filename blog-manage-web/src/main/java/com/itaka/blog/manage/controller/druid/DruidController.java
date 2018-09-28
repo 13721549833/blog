@@ -32,7 +32,7 @@ public class DruidController extends BaseController{
 	@SysLogMessage(logContent="监控中心",operatorMoudle="监控中心",operatorType="访问页面")
 	public void druid(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		logger.info("======druid======start======");
-		response.sendRedirect("http://127.0.0.1/blog/druid/index.html");
+		response.sendRedirect("http://118.31.62.70/blog/druid/index.html");
 	}
 	
 	public String getRemoteAddr(HttpServletRequest request) {

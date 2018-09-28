@@ -6,6 +6,9 @@
  */
 package com.itaka.blog.service.impl;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 import com.itaka.blog.util.RandomIDUtil;
 
 /** 
@@ -18,8 +21,14 @@ import com.itaka.blog.util.RandomIDUtil;
  */
 public class Test {
 	public static void main(String[] args) {
-		for (int i = 0; i < 5; i++) {
-			System.out.println(RandomIDUtil.getRandomID());
-		}
+//		for (int i = 0; i < 5; i++) {
+//			System.out.println(RandomIDUtil.getRandomID());
+//		}
+		Map<String, String> map = new IdentityHashMap<>();
+		map.put("111", "zhangsan");
+		map.put("111", "lisi");
+		map.put("222", "lisi");
+		map.put("333", "wangwu");
+		System.out.println(map);
 	}
 }

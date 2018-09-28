@@ -9,7 +9,7 @@
     <result column="permission" property="permission" jdbcType="VARCHAR" />
     <result column="parent_id" property="parentId" jdbcType="CHAR" />
     <result column="sort" property="sort" jdbcType="INTEGER" />
-    <result column="external" property="external" jdbcType="BIT" />
+    <result column="external" property="external" jdbcType="TINYINT" />
     <result column="status" property="status" jdbcType="VARCHAR" />
     <result column="icon" property="icon" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="VARCHAR" />
@@ -24,7 +24,7 @@
         <result column="permission" property="permission" jdbcType="VARCHAR"/>
         <result column="parent_id" property="parentId" jdbcType="CHAR"/>
         <result column="sort" property="sort" jdbcType="INTEGER"/>
-        <result column="external" property="external" jdbcType="BIT"/>
+        <result column="external" property="external" jdbcType="TINYINT"/>
         <result column="status" property="status" jdbcType="VARCHAR"/>
         <result column="icon" property="icon" jdbcType="VARCHAR"/>
         <result column="checked" property="checked" jdbcType="BIT"/>
@@ -56,7 +56,7 @@
       create_time, update_time)
     values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
       #{url,jdbcType=VARCHAR}, #{permission,jdbcType=VARCHAR}, #{parentId,jdbcType=CHAR}, 
-      #{sort,jdbcType=INTEGER}, #{external,jdbcType=BIT}, #{status,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{sort,jdbcType=INTEGER}, #{external,jdbcType=TINYINT}, #{status,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.itaka.blog.pojo.Menu" >
@@ -122,7 +122,7 @@
         #{sort,jdbcType=INTEGER},
       </if>
       <if test="external != null and external != ''" >
-        #{external,jdbcType=BIT},
+        #{external,jdbcType=TINYINT},
       </if>
       <if test="status != null and status != ''" >
         #{status,jdbcType=VARCHAR},
@@ -160,7 +160,7 @@
         sort = #{sort,jdbcType=INTEGER},
       </if>
       <if test="external != null and external != ''" >
-        external = #{external,jdbcType=BIT},
+        external = #{external,jdbcType=TINYINT},
       </if>
       <if test="status != null and status != ''" >
         status = #{status,jdbcType=VARCHAR},
@@ -185,7 +185,7 @@
       permission = #{permission,jdbcType=VARCHAR},
       parent_id = #{parentId,jdbcType=CHAR},
       sort = #{sort,jdbcType=INTEGER},
-      external = #{external,jdbcType=BIT},
+      external = #{external,jdbcType=TINYINT},
       status = #{status,jdbcType=VARCHAR},
       icon = #{icon,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=VARCHAR},
@@ -195,18 +195,36 @@
   
   <!-- 获取一级菜单 -->
   <select id="getAllFirstMenuList" resultMap="sysMenuMap">
-  	select <include refid="Base_Column_List"></include>
+  	select <include refid="menu_column_list"></include>
   	from tb_menu where parent_id = '0'
-  	and status = 1
-  	order by parent_id asc,sort asc
+  	and status = '1'
+  	order by sort 
   </select>
   
+  <!-- 获取二级菜单 -->
+  <select id="getAllSecondMenuList" resultMap="sysMenuMap">
+  	SELECT node.id, node.name, node.type, node.url, 
+  	node.permission, node.parent_id, node.sort, 
+  	node.external,node.status,node.icon,node.create_time 
+  	FROM tb_menu m 
+  	LEFT JOIN tb_menu node ON m.id=node.parent_id 
+  	WHERE node.type='2' AND node.status='1' 
+  	ORDER BY m.sort,node.sort;
+  </select>
+  
+  <!-- 获取该节点下的菜单排序 -->
+  <select id="getMenuMaxSort" parameterType="java.lang.String" resultType="int">
+  	SELECT IFNULL(MAX(sort),0) AS sort FROM tb_menu 
+  	WHERE STATUS='1' AND parent_id = #{parentId}
+  </select>
+  
+  <!-- 根据父级id查询子菜单列表 -->
   <select id="getAllSubMenuListByParentId" resultMap="sysMenuMap">
-  	select <include refid="Base_Column_List"></include>
+  	select <include refid="menu_column_list"></include>
   	from tb_menu
   	where parent_id=#{parentId}
   	and status = 1
-  	order by parent_id asc,sort asc
+  	order by sort 
   </select>
   
   <!-- 根据用户id获取菜单列表 -->
@@ -225,6 +243,13 @@
 	where m.id=rm.menu_id and rm.role_id=ur.role_id 
 	and ur.role_id=#{roleCode} and m.status=1)
 	order by m.parent_id asc,m.sort asc
+  </select>
+  
+  <!-- 获取权限及权限地址列表 -->
+  <select id="listUrlAndPermission" resultMap="sysMenuMap">
+  	SELECT url,permission FROM tb_menu
+    WHERE url IS NOT NULL
+    ORDER BY sort ASC
   </select>
   
   <!-- 根据角色id获取菜单权限 -->
@@ -247,11 +272,11 @@
     m.sort ASC
   </select>
   
+  <!-- 获取菜单总数 -->
   <select id="getTotalMenu" parameterType="com.itaka.blog.vo.MenuConditionVo" resultType="java.lang.Integer">
   	select count(1)
   	from tb_menu 
   	<where>
-  		type != '3'
   	  <if test="name != null and name != ''" >
         and name like concat(concat('%',#{name}),'%')
       </if>
@@ -264,11 +289,11 @@
   	</where>
   </select>
   
+  <!-- 获取菜单列表 -->
   <select id="getMenuList" parameterType="com.itaka.blog.vo.MenuConditionVo" resultMap="BaseResultMap">
   	select <include refid="menu_column_list"/>
   	from tb_menu 
   	<where>
-  		type != '3'
   	  <if test="name != null and name != ''" >
         and name like concat(concat('%',#{name}),'%')
       </if>
@@ -279,7 +304,7 @@
         and status = #{status,jdbcType=VARCHAR}
       </if>
   	</where>
-  	order by parent_id asc,sort asc
+  	order by type asc,sort asc
   	limit #{startRow},#{pageSize}
   </select>
 </mapper>

@@ -70,7 +70,7 @@
             	var roleId = $('#roleId').val();
             	var name = $('#name').val();
 				var description = $('#description').val();
-				var status = $('input[name="status"]').val();
+				var status = $('input[name="status"]:checked').val();
 				
 				if(RegxUtil.isEmpty(name)){
 					layer.tips('角色名称不能为空', '#name', {

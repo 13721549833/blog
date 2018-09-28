@@ -1,6 +1,10 @@
 package com.itaka.blog.service.redis;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.itaka.blog.util.SerializeUtil;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -68,6 +72,38 @@ public class JedisClientCluster implements JedisClient{
 	@Override
 	public void delete(String key) {
 		jedisCluster.del(key);
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.redis.JedisClient#set(java.lang.String, java.lang.Object, int) 
+	 */
+	@Override
+	public String set(String key, Object obj, int seconds) {
+		String value = SerializeUtil.serialize(obj);
+		String result = jedisCluster.set(key, value);
+		jedisCluster.expire(key, seconds);
+		return result;
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.redis.JedisClient#setList(java.lang.String, java.util.List, int) 
+	 */
+	@Override
+	public void setList(String key, List<?> list, int seconds) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.redis.JedisClient#getList(java.lang.String) 
+	 */
+	@Override
+	public List<?> getList(String key) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

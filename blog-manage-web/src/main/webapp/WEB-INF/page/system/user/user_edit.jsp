@@ -145,8 +145,8 @@
 				var mobile = $('#mobile').val();
 				var qq = $('#qq').val();
 				var birthday = $('#birthday').val();
-				var gender = $('input[name="gender"]').val();
-				var status = $('input[name="status"]').val();
+				var gender = $('input[name="gender"]:checked').val();
+				var status = $('input[name="status"]:checked').val();
 				var roleId = $('#role').find('option:selected').val();
 				var company = $('input[name="company"]').val();
 				var blog = $('input[name="blog"]').val();

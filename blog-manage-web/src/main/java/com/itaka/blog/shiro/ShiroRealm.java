@@ -20,18 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-
-import com.itaka.blog.constant.JurisdictionConstant;
-import com.itaka.blog.constant.SystemConstant;
-import com.itaka.blog.jurisdiction.Jurisdiction;
 import com.itaka.blog.pojo.Role;
 import com.itaka.blog.pojo.SysMenu;
 import com.itaka.blog.pojo.User;
 import com.itaka.blog.service.MenuService;
 import com.itaka.blog.service.RoleService;
 import com.itaka.blog.service.UserService;
-
-import net.sf.json.JSONArray;
 
 /**
  * 

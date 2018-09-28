@@ -72,33 +72,36 @@ public class RoleServiceImpl implements RoleService {
 	 * Function : 
 	 * @see com.itaka.blog.service.RoleService#queryMenuByRoleId(java.lang.String) 
 	 */
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Tree> queryMenuByRoleId(String roleId) {
-		// 先从缓存取角色菜单权限，如果取不到，再从数据库查
-		String treeJson = jedisClient.get(JurisdictionConstant.REDIS_ROLE_MENU_KEY + roleId);
-		List<Tree> treeList = new ArrayList<Tree>();
-		if (StringUtils.isEmpty(treeJson)) {
-			// 根据角色id查询菜单权限
-			List<SysMenu> menuList = menuMapper.queryMenuByRoleId(roleId);
-	        if (CollectionUtils.isEmpty(menuList)) {
-	            return null;
-	        }
-	        // 将菜单转为ztree形式
-	        for (SysMenu menu : menuList) {
-	        	Tree tree = new Tree();
-	        	tree.setId(menu.getId());
-	        	tree.setpId(menu.getParentId());
-	        	tree.setChecked(menu.isChecked());
-	        	tree.setName(menu.getName());
-	        	tree.setType(menu.getType());
-	        	treeList.add(tree);
-	        }
-	        jedisClient.set(JurisdictionConstant.REDIS_ROLE_MENU_KEY + roleId, JSONArray.fromObject(treeList).toString(), 24*3600);
-		}else{
-			treeList = JSONArray.toList(JSONArray.fromObject(treeJson),Tree.class);
+		List<Tree> newTreeList = new ArrayList<>();
+		try {
+			// 先从缓存取角色菜单权限，如果取不到，再从数据库查
+			List<Tree> treeList = (List<Tree>) jedisClient.getList(JurisdictionConstant.REDIS_ROLE_MENU_KEY + roleId);
+			if (CollectionUtils.isEmpty(treeList)) {
+				List<SysMenu> menuList = menuMapper.queryMenuByRoleId(roleId);
+		        if (CollectionUtils.isEmpty(menuList)) {
+		            return null;
+		        }
+		        // 将菜单转为ztree形式
+		        for (SysMenu menu : menuList) {
+		        	Tree tree = new Tree();
+		        	tree.setId(menu.getId());
+		        	tree.setpId(menu.getParentId());
+		        	tree.setChecked(menu.isChecked());
+		        	tree.setName(menu.getName());
+		        	tree.setType(menu.getType());
+		        	newTreeList.add(tree);
+		        }
+		        jedisClient.setList(JurisdictionConstant.REDIS_ROLE_MENU_KEY + roleId, newTreeList, 24*3600);
+			}else{
+				return treeList;
+			}
+		} catch (Exception e) {
+			logger.error("======RoleServiceImpl.queryMenuByRoleId()======error======",e);
 		}
-        return treeList;
+        return newTreeList;
 	}
 	
 	/** 
@@ -153,7 +156,7 @@ public class RoleServiceImpl implements RoleService {
 			result.setMsg("角色添加成功！");
 			logger.info("======RoleServiceImpl.saveRole()======end======");
 		} catch (Exception e) {
-			logger.error("======RoleServiceImpl.saveRole()======start======",e);
+			logger.error("======RoleServiceImpl.saveRole()======error======",e);
 		}
 		return result;
 	}

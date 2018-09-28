@@ -41,6 +41,7 @@
 			<select name="type" id="type" lay-verify="type">
 				<option value="1" selected="selected">一级菜单</option>
 				<option value="2">二级菜单</option>
+				<option value="3">按钮</option>
 			</select>
 		</div>
 	</div>
@@ -63,7 +64,7 @@
 		<div class="layui-form-item">
 			<shiro:hasPermission name="menu:add">
 				<div class="layui-input-add">
-					<a class="layui-btn  layui-btn-sm" style="background: #5FB878;"><i class="layui-icon">&#xe654;</i>新增</a>
+					<a href="${ctx}/menu/addMenu.do" class="layui-btn  layui-btn-sm" style="background: #5FB878;"><i class="layui-icon">&#xe654;</i>新增</a>
 				</div>
 			</shiro:hasPermission>
 		</div> 
@@ -85,10 +86,29 @@
   </div>
 </body> 
   <script src="${ctx}/static/plugins/layui/layui.js"></script>
+  <script type="text/javascript">
+	 var ctx = '${ctx}';
+  </script>
+  <script type="text/html" id="menuUrl">
+	 {{#  if(d['url']){ }}
+     {{ d['url'] }}
+     {{#  } else { }}
+     <span>无数据</span>
+     {{#  } }}
+  </script>
   
   <script type="text/html" id="menuType">
-  	 {{ d.type==1 ? '一级菜单' : '二级菜单' }}
+	 {{ d.type==1 ? '一级菜单' :(d.type==2 ? '二级菜单' : '按钮')}}
   </script>
+  
+  <script type="text/html" id="menuIcon">
+	 {{#  if(d['icon']){ }}
+     {{ d['icon'] }}
+     {{#  } else { }}
+     <span>无数据</span>
+     {{#  } }}
+  </script>
+  
   <script type="text/html" id="menuStatus">
 	 <!-- 这里的 checked 的状态只是演示 -->
 	 <input disable type="checkbox" name="lock" value="{{d.status}}" title="启用" lay-filter="lockDemo" {{ d.status==1 ? 'checked' : '' }}>
@@ -96,7 +116,7 @@
 
   <script type="text/html" id="menuOper">
 	 {{#<shiro:hasPermission name="menu:edit">}}
-	 	<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>修改</a>
+	 	<a href="${ctx}/menu/modifyMenu.do?menuId={{d.id}}" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>修改</a>
 	 {{#</shiro:hasPermission>}}
 	 {{#<shiro:hasPermission name="menu:delete">}}	 
 	 <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
@@ -155,6 +175,7 @@
             				title:'资源地址',
             				align:'center',
             				width:160,
+            				templet:'#menuUrl'
             			},
             			{
             				field:'status',
@@ -168,6 +189,7 @@
             				title:'图标',
             				align:'center',
             				width:150,
+            				templet:'#menuIcon'
             			},
             			{
             				field:'createTime',
@@ -206,7 +228,79 @@
             	tableOptions.where = {name:name,type:type,status:status};
             	table.render(tableOptions);
             	return false;
-            })
+            });
+            
+            table.on('tool(menu)', function(data) {
+				// 删除
+				if(data.event === 'del') {
+					layer.confirm('确认要删除吗？', function(index) {
+						// 执行网络请求
+						var index = layer.load(2);
+						$.ajax({
+							url: ctx + '/menu/delMenu.do',
+							type:'POST',
+							data : {menuIds:data.data.id},
+							success : function(data){
+								if(data.code=='1'){
+									layer.close(index);
+									layer.msg(data.msg, {
+										time: 2000 //2秒关闭（如果不配置，默认是3秒）
+									}, function() {
+										// 删除成功跳转到菜单列表
+										window.location.href = ctx+ '/menu/menuList.do';
+									});
+								}else{
+									layer.close(index);
+									layer.msg(data.msg);
+								}
+							},
+							error : function(data){
+								layer.msg(data.msg);
+							}
+						});
+					});
+				}
+			});
+			
+            $('#batchDelete').on('click', function() {
+            	var batchIds = "";
+            	// 获取选中项
+            	var checkStatus = table.checkStatus('menu-lt')
+                ,data = checkStatus.data;
+            	var checked = new Array();
+            	$.each(data, function(index, value) {
+					// 将id加入数组中
+            		checked.push(value.id);
+            	});
+            	// 获取批量id
+            	batchIds = checked.join(",");
+            	layer.confirm('确认要删除吗？', function(index) {
+            		var index = layer.load(2);
+                	$.ajax({
+    					url: ctx + '/menu/delMenu.do',
+    					type:'POST',
+    					data : {menuIds:batchIds},
+    					success : function(data){
+    						if(data.code=='1'){
+    							layer.close(index);
+    							layer.msg(data.msg, {
+    								time: 2000 //2秒关闭（如果不配置，默认是3秒）
+    							}, function() {
+    								// 删除成功跳转到菜单列表
+    								window.location.href = ctx+ '/menu/menuList.do';
+    							});
+    						}else{
+    							layer.close(index);
+    							layer.msg(data.msg);
+    						}
+    					},
+    					error : function(data){
+    						layer.msg(data.msg);
+    					}
+    				});
+            	});
+            });
+            
         });
     </script>
 </html>

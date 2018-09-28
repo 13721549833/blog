@@ -22,4 +22,12 @@ public interface RoleMenuMapper {
 	 * @param roleId 角色id
 	 */ 
 	void deleteByRoleId(String roleId);
+
+	/** 
+	 * deleteByMenuId: 根据菜单id删除角色菜单信息 <br/>
+	 *
+	 * @author Jerry
+	 * @param menuId 菜单id
+	 */ 
+	void deleteByMenuId(String menuId);
 }

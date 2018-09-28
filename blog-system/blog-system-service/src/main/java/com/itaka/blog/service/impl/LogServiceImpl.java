@@ -6,12 +6,16 @@
  */
 package com.itaka.blog.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.itaka.blog.mapper.LogMapper;
+import com.itaka.blog.page.PageInfo;
 import com.itaka.blog.pojo.Log;
 import com.itaka.blog.service.LogService;
+import com.itaka.blog.vo.LogConditionVo;
 
 /** 
  * ClassName: LogServiceImpl <br/> 
@@ -34,6 +38,19 @@ public class LogServiceImpl implements LogService {
 	@Override
 	public void save(Log log) {
 		logMapper.insert(log);
+	}
+
+	/** 
+	 * Function : 
+	 * @see com.itaka.blog.service.LogService#getLogList(com.itaka.blog.vo.LogConditionVo) 
+	 */
+	@Override
+	public PageInfo<Log> getLogList(LogConditionVo log) {
+		List<Log> logList = logMapper.getLogList(log);
+		PageInfo<Log> page = new PageInfo<>();
+		page.setTotal(logMapper.getLogTotal());
+		page.setList(logList);
+		return page;
 	}
 
 }

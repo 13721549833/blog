@@ -39,6 +39,19 @@
 		<property name="maxUploadSize" value="5242880"></property>
 	</bean>
 	
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">  
+	    <property name="exceptionMappings">  
+	        <props>  
+	        	<!-- 表示捕获的异常 -->
+	            <prop key="org.apache.shiro.authz.UnauthorizedException">
+	            	redirect:/static/error/unauthorize.jsp
+	            </prop>  
+	        </props>  
+	    </property>  
+	</bean> 
+	
+	
+	
 	<!-- 拦截器 -->  
     <mvc:interceptors>  
         <!-- 多个拦截器，顺序执行 -->  

@@ -20,8 +20,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskDemo {
 
-	//@Scheduled(cron="0/5 * *  * * ? ")
+	@Scheduled(cron="0 0/5 * * * ? ")
 	public void test(){
-		//System.out.println("===定时任务执行了===");
+		System.out.println("===test===5分钟一次===");
+	}
+	
+	@Scheduled(cron="0 0 0/1 * * ? ")
+	public void test1(){
+		System.out.println("===test1===1小时一次===");
 	}
 }

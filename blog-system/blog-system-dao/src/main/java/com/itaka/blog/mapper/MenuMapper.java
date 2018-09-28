@@ -28,6 +28,14 @@ public interface MenuMapper {
      */
     List<SysMenu> getAllFirstMenuList();
     
+    /** 
+	 * getAllSecondMenuList: 获取二级级菜单 <br/>
+	 *
+	 * @author Jerry
+	 * @return 
+	 */ 
+	List<SysMenu> getAllSecondMenuList();
+    
     /**
      * 
      * getAllSubMenuListByParentId: 根据父id查询上一级菜单 <br/>
@@ -86,5 +94,24 @@ public interface MenuMapper {
 	 * @return
 	 */
 	List<SysMenu> getMenuList(MenuConditionVo conditionVo);
+
+	/**
+	 * 
+	 * listUrlAndPermission: 获取权限及权限地址列表 <br/>
+	 *
+	 * @author Jerry
+	 * @return
+	 */
+	List<SysMenu> listUrlAndPermission();
+	
+	/**
+	 * 
+	 * getMenuMaxSort: 获取该节点下的菜单排序 <br/>
+	 *
+	 * @author Jerry
+	 * @param parentId 父id
+	 * @return
+	 */
+	int getMenuMaxSort(String parentId);
 
 }

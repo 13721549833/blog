@@ -18,8 +18,6 @@ import com.itaka.blog.util.DateUtil;
 import com.itaka.blog.util.PropertiesUtils;
 import com.itaka.blog.util.RandomIDUtil;
 
-import net.sf.json.JSONObject;
-
 /**
  * 
  * ClassName: LoginServiceImpl <br/> 
@@ -107,8 +105,10 @@ public class LoginServiceImpl implements LoginService{
 				}else{//否则先获取登陆次数，再加1
 					user.setLoginCount(user.getLoginCount()+1);
 				}
+				// 更新用户登录信息
 				userMapper.updateByPrimaryKeySelective(user);
-				jedisClient.set("user_"+user.getUsername(), JSONObject.fromObject(user).toString(),1800);
+				// 将用户信息放进缓存
+				jedisClient.set("user_"+user.getUsername(), user,3600);
 			}else{
 				logger.info("用户名或密码错误！");
 				throw new RuntimeException("用户名或密码错误！");
